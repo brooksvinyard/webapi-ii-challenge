@@ -5,6 +5,7 @@ const DB = require('../data/db.js');
 const router = express.Router();
 
 // Handles urls beginning with /api/posts
+// GET request to /api/posts
 router.get('/', async (req, res) => {
     try {
       const post = await DB.find(req.query);
@@ -13,7 +14,7 @@ router.get('/', async (req, res) => {
       // log error to database
       console.log(error);
       res.status(500).json({
-        message: 'Error retrieving the post',
+        message: 'The posts information could not be retrieved.',
       });
     }
 });
@@ -21,17 +22,15 @@ router.get('/', async (req, res) => {
 router.get('/:id', async (req, res) => {
 try {
     const post = await DB.findById(req.params.id);
-
-    if (post) {
-    res.status(200).json(post);
+    if (post.length === 0) {
+        res.status(404).json({ message: 'The post with the specified ID does not exist.' });
     } else {
-    res.status(404).json({ message: 'post not found' });
+        res.status(200).json(post);
     }
 } catch (error) {
-    // log error to database
     console.log(error);
     res.status(500).json({
-    message: 'Error retrieving the post',
+    message: 'The post information could not be retrieved.',
     });
 }
 });
