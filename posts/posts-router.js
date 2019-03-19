@@ -71,19 +71,26 @@ try {
 }
 });
 
+// PUT request to /api/posts/:id
 router.put('/:id', async (req, res) => {
 try {
     const post = await DB.update(req.params.id, req.body);
-    if (post) {
-    res.status(200).json(post);
+
+    if (!req.params.id) {
+        res.status(500).json({message: 'The post with the specified ID does not exist.'});
+    } else if (!req.body.title || !req.body.contents ) {
+        res.status(400).json({message: 'Please provide title and contents for the post.'});
+    } else if(post) {
+        res.status(200).json(post);
     } else {
-    res.status(404).json({ message: 'The post could not be found' });
+        res.status(404).json({message: 'post not found'});
     }
+
 } catch (error) {
     // log error to database
     console.log(error);
     res.status(500).json({
-    message: 'Error updating the post',
+    message: 'The post information could not be modified.',
     });
 }
 });
